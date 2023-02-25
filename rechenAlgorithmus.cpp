@@ -63,11 +63,13 @@ std::string rechnen()
                         //for (int i = 0; i < zahl2; i++) zwischenErgebnis = zahl1 * zahl1;
                         zwischenErgebnis = (pow(zahl1, zahl2));
                         std::string temp = std::to_string(zwischenErgebnis);
-                        if (temp.find_first_not_of("0123456789,") != std::string::npos) return ("NaN");
+                        if (temp.find("nan") != std::string::npos) return ("NaN");
                     }
                     else if (iOperator == wurzel)
                     {
                         zwischenErgebnis = std::sqrt(zahl2);
+                        std::string temp = std::to_string(zwischenErgebnis);
+                        if (temp.find("nan") != std::string::npos) return ("NaN");
                     }
                     else if (iOperator == modulo)
                     {
@@ -183,8 +185,11 @@ std::string rechenAlgorithmus(std::string rechnung)
         rechnung.erase(rechnung.begin(), rechnung.begin() + 1);
         rechnung.pop_back();
     }
+
+    if (rechnung == "NaN") return rechnung;
+
     rechnung.pop_back();
-    if (rechnung.substr(rechnung.find(",")).length() == 15)
+    if (rechnung.substr(rechnung.find(",") + 1).length() == 15)
     {
         //if (rechnung.size() > 3 && int(rechnung[rechnung.size() - 1])  >= 53 && rechnung[rechnung.size() - 2] < 57) rechnung[rechnung.size() - 2] += 1;
         //rechnung.pop_back();

@@ -313,8 +313,8 @@ void MainWindow::on_Button_delete_clicked()
 void MainWindow::on_Button_AC_clicked()
 {
     resetEingabewerte();
-    rechnung = "";
-    rechnungDisp = "";
+    rechnung.clear();
+    rechnungDisp.clear();
     ui->Ergebnisfenster->setText("");
     ui->Rechenfenster->setText(rechnungDisp);
 }
