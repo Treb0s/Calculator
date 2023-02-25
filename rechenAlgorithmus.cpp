@@ -21,6 +21,47 @@ std::vector<double> vRechnung;
 
 std::string sOperator = "^w%/*+-";
 
+std::string runden(std::string rechnung)
+{
+    //if (rechnung.size() > 3 && int(rechnung[rechnung.size() - 1])  >= 53 && rechnung[rechnung.size() - 2] < 57) rechnung[rechnung.size() - 2] += 1;
+    //rechnung.pop_back();
+    if (int(rechnung[rechnung.size() - 1] == 57))
+    {
+        while (int(rechnung[rechnung.size() - 1] == 57) && rechnung[rechnung.size() - 2] != ',')
+        {
+            rechnung.pop_back();
+        }
+        rechnung[rechnung.size() - 1] += 1;
+    }
+
+    if (rechnung[rechnung.size() - 1] == ',') //','
+    {
+        rechnung.pop_back();
+        for (int i = rechnung.size() - 1; i > 0; i--)
+        {
+            if (int(rechnung[i]) < 57)
+            {
+                rechnung[0] += 1;
+                break;
+            }
+        }
+    }
+
+    for (int i = rechnung.length() - 1; i >= 0; i--)
+    {
+        if (rechnung[i] == '0') rechnung.pop_back();
+
+        else if (rechnung[i] == ',')
+        {
+            rechnung.pop_back();
+            break;
+        }
+
+        else break;
+    }
+    return rechnung;
+}
+
 std::string rechnen()
 {
     double zahl1 = 0;
@@ -191,42 +232,8 @@ std::string rechenAlgorithmus(std::string rechnung)
     rechnung.pop_back();
     if (rechnung.substr(rechnung.find(",") + 1).length() == 15)
     {
-        //if (rechnung.size() > 3 && int(rechnung[rechnung.size() - 1])  >= 53 && rechnung[rechnung.size() - 2] < 57) rechnung[rechnung.size() - 2] += 1;
-        //rechnung.pop_back();
-        if (int(rechnung[rechnung.size() - 1] == 57))
-        {
-            while (int(rechnung[rechnung.size() - 1] == 57) && rechnung[rechnung.size() - 2] != ',')
-            {
-                rechnung.pop_back();
-            }
-            rechnung[rechnung.size() - 1] += 1;
-        }
+        rechnung = runden(rechnung);
 
-        if (rechnung[rechnung.size() - 1] == ',') //','
-        {
-            rechnung.pop_back();
-            for (int i = rechnung.size() - 1; i > 0; i--)
-            {
-                if (int(rechnung[i]) < 57)
-                {
-                    rechnung[0] += 1;
-                    break;
-                }
-            }
-        }
-
-        for (int i = rechnung.length() - 1; i >= 0; i--)
-        {
-            if (rechnung[i] == '0') rechnung.pop_back();
-
-            else if (rechnung[i] == ',')
-            {
-                rechnung.pop_back();
-                break;
-            }
-
-            else break;
-        }
     }
     return rechnung; //.substr(rechenanfang, rechenende + 1 - rechenanfang);
 }
