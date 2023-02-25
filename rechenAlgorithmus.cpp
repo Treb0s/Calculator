@@ -131,22 +131,32 @@ std::string rechenAlgorithmus(std::string rechnung)
     //int vorzeichenZahlEnde = 0;
     if (rechnung.find_last_of("^w%/*+-") == rechnung.length() - 1) rechnung.pop_back();
 
-    if (rechnung[0] == '-')
+    if(rechnung[0] == '-')
     {
-        insertAnfang  = 0;
-        rechnung.insert(insertAnfang, "[");
-        if (rechnung.substr(2).find_first_of("^%/*+-)") == std::string::npos) rechnung.insert(rechnung.size(), "]");
+        rechnung.erase(0, 1);
+        rechnung.insert(insertAnfang, "([-1]*");
+        if(rechnung[6] == 'w' && rechnung[7] == '(')
+        {
+            rechnung.insert(rechnung.substr(8).find_first_of(')') + 8, ")");
+        }
+        else if (rechnung.substr(6).find_first_of("^%/*+-)") == std::string::npos) rechnung.insert(rechnung.size(), ")");
 
-        else rechnung.insert(rechnung.substr(1).find_first_of("^w%/*+-)"), "]");
+        else rechnung.insert(rechnung.substr(6).find_first_of("^%/*+-)") + 6, ")");
     }
 
-    for (int i = 0; i < rechnung.length(); i++) // - Vorzeichen sollen durch ([-1]*AZSDRUCK) ersetzt werden
+    for (int i = 0; i < rechnung.length(); i++) // - Vorzeichen sollen durch ([-1]*AUSDRUCK) ersetzt werden
     {
         if (rechnung.substr(i, rechnung.length() - i).find("(-") != std::string::npos)
         {
+            bool wurzelklammer = false;
             insertAnfang = rechnung.substr(i).find("(-") + 1 + i;
-            rechnung.insert(insertAnfang, "[");
-            rechnung.insert(rechnung.substr(insertAnfang + 2).find_first_of("^w%/*+-)") + insertAnfang + 2, "]");
+            rechnung.erase(insertAnfang, 1);
+            rechnung.insert(insertAnfang, "([-1]*");
+            if(rechnung[insertAnfang + 6] == 'w' && rechnung[insertAnfang + 7] == '(')
+            {
+                    rechnung.insert(rechnung.substr(insertAnfang + 8).find_first_of(')') + insertAnfang + 8, ")");
+            }
+            else rechnung.insert(rechnung.substr(insertAnfang + 6).find_first_of("^%/*+-)") + insertAnfang + 6, ")");
         }
     }
 
@@ -173,9 +183,9 @@ std::string rechenAlgorithmus(std::string rechnung)
         rechnung.erase(rechnung.begin(), rechnung.begin() + 1);
         rechnung.pop_back();
     }
-    if (rechnung.find(',') != std::string::npos) // ','
+    rechnung.pop_back();
+    if (rechnung.substr(rechnung.find(",")).length() == 15)
     {
-        rechnung.pop_back();
         //if (rechnung.size() > 3 && int(rechnung[rechnung.size() - 1])  >= 53 && rechnung[rechnung.size() - 2] < 57) rechnung[rechnung.size() - 2] += 1;
         //rechnung.pop_back();
         if (int(rechnung[rechnung.size() - 1] == 57))
@@ -204,7 +214,7 @@ std::string rechenAlgorithmus(std::string rechnung)
         {
             if (rechnung[i] == '0') rechnung.pop_back();
 
-            else if (rechnung[i] == ',') // == ','
+            else if (rechnung[i] == ',')
             {
                 rechnung.pop_back();
                 break;
