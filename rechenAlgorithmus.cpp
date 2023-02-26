@@ -174,6 +174,7 @@ std::string rechenAlgorithmus(std::string rechnung)
     //int vorzeichenZahlEnde = 0;
     if (rechnung.find_last_of("^w%/*+-") == rechnung.length() - 1) rechnung.pop_back();
 
+    if (rechnung.find("w-") != std::string::npos) rechnung = "NaN";
 
 
     if(rechnung[0] == '-')
@@ -209,17 +210,18 @@ std::string rechenAlgorithmus(std::string rechnung)
             }
             else rechnung.insert(rechnung.substr(insertAnfang + 6).find_first_of("^%/*+-)") + insertAnfang + 6, ")");
         }
-        if (rechnung.substr(i, rechnung.length() - i).find("w-") != std::string::npos)
-        {
-            insertAnfang = rechnung.substr(i).find("w-") + 1 + i;
-            rechnung.erase(insertAnfang, 1);
-            rechnung.insert(insertAnfang, "([-1]*");
-
-            if (rechnung.substr(insertAnfang + 6).find_first_of("^%/*+-)") == std::string::npos) rechnung.insert(rechnung.size(), ")");
-
-            else rechnung.insert(rechnung.substr(insertAnfang + 6).find_first_of("^%/*+-)") + insertAnfang + 6, ")");
-        }
+        //if (rechnung.substr(i, rechnung.length() - i).find("w-") != std::string::npos)
+        //{
+        //    insertAnfang = rechnung.substr(i).find("w-") + 1 + i;
+        //    rechnung.erase(insertAnfang, 1);
+        //    rechnung.insert(insertAnfang, "([-1]*");
+//
+        //    if (rechnung.substr(insertAnfang + 6).find_first_of("^%/*+-)") == std::string::npos) rechnung.insert(rechnung.size(), ")");
+//
+        //    else rechnung.insert(rechnung.substr(insertAnfang + 6).find_first_of("^%/*+-)") + insertAnfang + 6, ")");
+        //}
     }
+
 
     while (rechnung[0] != '[' && rechnung.find_first_of("^w%/*+-") != std::string::npos || rechnung[0] == '[' && rechnung.substr(2, rechnung.size() -2).find_first_of("^w%/*+-") != std::string::npos) //Die while-Schleife wird verlassen sobals sich keine Rechenoperatoren mehr in dem String rechnung befinden.
     {
