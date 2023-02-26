@@ -94,18 +94,21 @@ void MainWindow::OperatorClicked(char chOperator)
     {
         eingabewerte.push_back(Eingabewerte());
         eingabewerte[eingabewerte.size() - 1].sqRootAllowed = 0;
+        eingabewerte[eingabewerte.size() - 1].minusAllowed = 1;
         rechnungDisp += "√";
     }
     else if (chOperator == '-' && eingabewerte[eingabewerte.size() - 1].minusAllowed == 1)
     {
         eingabewerte.push_back(Eingabewerte());
         eingabewerte[eingabewerte.size() - 1].sqRootAllowed = 1;
+        eingabewerte[eingabewerte.size() - 1].minusAllowed = 0;
         rechnungDisp += chOperator;
     }
     else if (chOperator != 'w' && eingabewerte[eingabewerte.size() - 1].operatorsAllowed == 1)
     {
         eingabewerte.push_back(Eingabewerte());
         eingabewerte[eingabewerte.size() - 1].sqRootAllowed = 1;
+        eingabewerte[eingabewerte.size() - 1].minusAllowed = 0;
 
         if (chOperator == '/')
         {
@@ -125,7 +128,6 @@ void MainWindow::OperatorClicked(char chOperator)
     eingabewerte[eingabewerte.size() - 1].commaAllowed = 0;
     eingabewerte[eingabewerte.size() - 1].commaInNumber = 0;
     eingabewerte[eingabewerte.size() - 1].operatorsAllowed = 0;
-    eingabewerte[eingabewerte.size() - 1].minusAllowed = 0;
     eingabewerte[eingabewerte.size() - 1].rightParenAllowed = 0;
     eingabewerte[eingabewerte.size() - 1].leftParenAllowed = 1;
     eingabewerte[eingabewerte.size() - 1].bracketControl = eingabewerte[eingabewerte.size() - 2].bracketControl;
