@@ -233,5 +233,19 @@ std::string rechenAlgorithmus(std::string rechnung)
         rechnung.pop_back();
         rechnung = runden(rechnung);
     }
+    if (rechnung.find(",") != std::string::npos)
+    {
+        for (int i = rechnung.substr(0 ,rechnung.find(",")).length() -3; i > 0; i -= 3)
+            {
+                rechnung.insert(i, ".");
+            }
+    }
+    else
+    {
+        for (int i = rechnung.length() -3; i > 0; i -= 3)
+        {
+            rechnung.insert(i, ".");
+        }
+    }
     return rechnung; //.substr(rechenanfang, rechenende + 1 - rechenanfang);
 }

@@ -99,7 +99,7 @@ void MainWindow::OperatorClicked(char chOperator)
 
     if (chOperator == 'w' && eingabewerte[eingabewerte.size() - 2].sqRootAllowed == 1)
     {
-        eingabewerte[eingabewerte.size() - 2].sqRootAllowed = 0;
+        eingabewerte[eingabewerte.size() - 1].sqRootAllowed = 0;
         rechnungDisp += "√";
     }
 
