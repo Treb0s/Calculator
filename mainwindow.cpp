@@ -437,7 +437,7 @@ void MainWindow::keyPressEvent(QKeyEvent *event)
         OperatorClicked('%');
     }
 
-    if(event->key() == Qt::Key_Return)
+    if(event->key() == Qt::Key_Return || event->key() == Qt::Key_Enter)
     {
         on_Button_equal_clicked();
     }

@@ -221,6 +221,13 @@ std::string rechenAlgorithmus(std::string rechnung)
         rechnung.erase(rechenanfang - klammern, rechenende - rechenanfang + 1 + 2 * klammern);
         rechnung.insert(rechenanfang - klammern, rechnen());
     }
+
+    while (rechnung[0] == '(')
+    {
+        rechnung.erase(rechnung.begin(), rechnung.begin() + 1);
+        rechnung.pop_back();
+    }
+
     if (rechnung[0] == '[')
     {
         rechnung.erase(rechnung.begin(), rechnung.begin() + 1);
