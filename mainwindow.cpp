@@ -98,9 +98,11 @@ void MainWindow::OperatorClicked(char chOperator)
     }
     else if (chOperator == '-' && eingabewerte[eingabewerte.size() - 1].minusAllowed == 1)
     {
+        eingabewerte.push_back(Eingabewerte());
+        eingabewerte[eingabewerte.size() - 1].sqRootAllowed = 1;
         rechnungDisp += chOperator;
     }
-    else if (eingabewerte[eingabewerte.size() - 1].operatorsAllowed == 1)
+    else if (chOperator != 'w' && eingabewerte[eingabewerte.size() - 1].operatorsAllowed == 1)
     {
         eingabewerte.push_back(Eingabewerte());
         eingabewerte[eingabewerte.size() - 1].sqRootAllowed = 1;
@@ -278,7 +280,7 @@ void MainWindow::on_Button_sqRoot_clicked()
 
 void MainWindow::on_Button_comma_clicked()
 {
-    if (eingabewerte[eingabewerte.size() - 1].commaAllowed == 1 || eingabewerte[eingabewerte.size() - 1].commaInNumber == 0)
+    if (eingabewerte[eingabewerte.size() - 1].commaAllowed == 1 && eingabewerte[eingabewerte.size() - 1].commaInNumber == 0)
     {
         eingabewerte.push_back(Eingabewerte());
         eingabewerte[eingabewerte.size() - 1].numberAllowed = 1;
