@@ -14,7 +14,7 @@ struct Eingabewerte
     int commaAllowed;
     int commaInNumber;
     int operatorsAllowed;
-    int minusallowed;
+    int minusAllowed;
     int sqRootAllowed;
     int leftParenAllowed;
     int rightParenAllowed;
@@ -31,7 +31,7 @@ void resetEingabewerte()
     eingabewerte[0].commaAllowed = 0;
     eingabewerte[0].commaInNumber = 0;
     eingabewerte[0].operatorsAllowed = 0;
-    eingabewerte[0].minusallowed = 1;
+    eingabewerte[0].minusAllowed = 1;
     eingabewerte[0].sqRootAllowed = 1;
     eingabewerte[0].leftParenAllowed = 1;
     eingabewerte[0].rightParenAllowed = 0;
@@ -57,54 +57,52 @@ QString rechnungDisp;
 
 void MainWindow::NumberClicked(char number)
 {
-    eingabewerte.push_back(Eingabewerte());
-    eingabewerte[eingabewerte.size() - 1].commaInNumber = eingabewerte[eingabewerte.size() - 2].commaInNumber;
-    eingabewerte[eingabewerte.size() - 1].operatorsAllowed = 1;
-    eingabewerte[eingabewerte.size() - 1].minusallowed = 1;
-    eingabewerte[eingabewerte.size() - 1].leftParenAllowed = 0;
-    eingabewerte[eingabewerte.size() - 1].rightParenAllowed = 1;
-    eingabewerte[eingabewerte.size() - 1].bracketControl = eingabewerte[eingabewerte.size() - 2].bracketControl;
 
-    if (number == 'p' && eingabewerte[eingabewerte.size() - 2].numberAllowed == 1)
+    if (number == 'p' && eingabewerte[eingabewerte.size() - 1].numberAllowed == 1)
     {
+        eingabewerte.push_back(Eingabewerte());
         eingabewerte[eingabewerte.size() - 1].numberAllowed = 0;
         eingabewerte[eingabewerte.size() - 1].commaAllowed = 0;
         eingabewerte[eingabewerte.size() - 1].sqRootAllowed = 0;
         rechnung += strtk::type_to_string<double>(M_PI);
         rechnungDisp += "π";
-        ui->Rechenfenster->setText(rechnungDisp);
+        //ui->Rechenfenster->setText(rechnungDisp);
     }
-    else if (eingabewerte[eingabewerte.size() - 2].numberAllowed == 1)
+    else if (eingabewerte[eingabewerte.size() - 1].numberAllowed == 1)
     {
+        eingabewerte.push_back(Eingabewerte());
         eingabewerte[eingabewerte.size() - 1].numberAllowed = 1;
         eingabewerte[eingabewerte.size() - 1].commaAllowed = 1;
         eingabewerte[eingabewerte.size() - 1].sqRootAllowed = eingabewerte[eingabewerte.size() - 2].sqRootAllowed;
         rechnung += number;
         rechnungDisp += number;
     }
+    else return;
+    eingabewerte[eingabewerte.size() - 1].commaInNumber = eingabewerte[eingabewerte.size() - 2].commaInNumber;
+    eingabewerte[eingabewerte.size() - 1].operatorsAllowed = 1;
+    eingabewerte[eingabewerte.size() - 1].minusAllowed = 1;
+    eingabewerte[eingabewerte.size() - 1].leftParenAllowed = 0;
+    eingabewerte[eingabewerte.size() - 1].rightParenAllowed = 1;
+    eingabewerte[eingabewerte.size() - 1].bracketControl = eingabewerte[eingabewerte.size() - 2].bracketControl;
     ui->Rechenfenster->setText(rechnungDisp);
 }
 
 void MainWindow::OperatorClicked(char chOperator)
 {
-    eingabewerte.push_back(Eingabewerte());
-    eingabewerte[eingabewerte.size() - 1].numberAllowed = 1;
-    eingabewerte[eingabewerte.size() - 1].commaAllowed = 0;
-    eingabewerte[eingabewerte.size() - 1].commaInNumber = 0;
-    eingabewerte[eingabewerte.size() - 1].operatorsAllowed = 0;
-    eingabewerte[eingabewerte.size() - 1].minusallowed = 0;
-    eingabewerte[eingabewerte.size() - 1].rightParenAllowed = 0;
-    eingabewerte[eingabewerte.size() - 1].leftParenAllowed = 1;
-    eingabewerte[eingabewerte.size() - 1].bracketControl = eingabewerte[eingabewerte.size() - 2].bracketControl;
 
-    if (chOperator == 'w' && eingabewerte[eingabewerte.size() - 2].sqRootAllowed == 1)
+    if (chOperator == 'w' && eingabewerte[eingabewerte.size() - 1].sqRootAllowed == 1)
     {
+        eingabewerte.push_back(Eingabewerte());
         eingabewerte[eingabewerte.size() - 1].sqRootAllowed = 0;
         rechnungDisp += "√";
     }
-
-    else if (eingabewerte[eingabewerte.size() - 2].operatorsAllowed == 1)
+    else if (chOperator == '-' && eingabewerte[eingabewerte.size() - 1].minusAllowed == 1)
     {
+        rechnungDisp += chOperator;
+    }
+    else if (eingabewerte[eingabewerte.size() - 1].operatorsAllowed == 1)
+    {
+        eingabewerte.push_back(Eingabewerte());
         eingabewerte[eingabewerte.size() - 1].sqRootAllowed = 1;
 
         if (chOperator == '/')
@@ -115,44 +113,58 @@ void MainWindow::OperatorClicked(char chOperator)
         {
             rechnungDisp += "·";
         }
+
         else rechnungDisp += chOperator;
     }
+
+    else return;
     rechnung += chOperator;
+    eingabewerte[eingabewerte.size() - 1].numberAllowed = 1;
+    eingabewerte[eingabewerte.size() - 1].commaAllowed = 0;
+    eingabewerte[eingabewerte.size() - 1].commaInNumber = 0;
+    eingabewerte[eingabewerte.size() - 1].operatorsAllowed = 0;
+    eingabewerte[eingabewerte.size() - 1].minusAllowed = 0;
+    eingabewerte[eingabewerte.size() - 1].rightParenAllowed = 0;
+    eingabewerte[eingabewerte.size() - 1].leftParenAllowed = 1;
+    eingabewerte[eingabewerte.size() - 1].bracketControl = eingabewerte[eingabewerte.size() - 2].bracketControl;
     ui->Rechenfenster->setText(rechnungDisp);
 }
 
 void MainWindow::ParenthesesClicked(char brace)
 {
-    eingabewerte.push_back(Eingabewerte());
-    eingabewerte[eingabewerte.size() - 1].commaAllowed = 0;
-    eingabewerte[eingabewerte.size() - 1].commaInNumber = 0;
 
-    if (brace == '(' && eingabewerte[eingabewerte.size() - 2].leftParenAllowed == 1)
+    if (brace == '(' && eingabewerte[eingabewerte.size() - 1].leftParenAllowed == 1)
     {
+        eingabewerte.push_back(Eingabewerte());
         eingabewerte[eingabewerte.size() - 1].numberAllowed = 1;
         eingabewerte[eingabewerte.size() - 1].operatorsAllowed = 0;
-        eingabewerte[eingabewerte.size() - 1].minusallowed = 1;
+        eingabewerte[eingabewerte.size() - 1].minusAllowed = 1;
         eingabewerte[eingabewerte.size() - 1].sqRootAllowed = 1;
         eingabewerte[eingabewerte.size() - 1].leftParenAllowed = 1;
         eingabewerte[eingabewerte.size() - 1].rightParenAllowed = 0;
         eingabewerte[eingabewerte.size() - 1].bracketControl = eingabewerte[eingabewerte.size() - 2].bracketControl + 1;
         rechnung += brace;
         rechnungDisp += brace;
+        ui->Rechenfenster->setText(rechnungDisp);
     }
 
-    else if (brace == ')' && eingabewerte[eingabewerte.size() - 2].rightParenAllowed == 1 && eingabewerte[eingabewerte.size() - 2].bracketControl != 0)
+    else if (brace == ')' && eingabewerte[eingabewerte.size() - 1].rightParenAllowed == 1 && eingabewerte[eingabewerte.size() - 1].bracketControl != 0)
     {
+        eingabewerte.push_back(Eingabewerte());
         eingabewerte[eingabewerte.size() - 1].numberAllowed = 0;
         eingabewerte[eingabewerte.size() - 1].operatorsAllowed = 1;
-        eingabewerte[eingabewerte.size() - 1].minusallowed = 0;
+        eingabewerte[eingabewerte.size() - 1].minusAllowed = 0;
         eingabewerte[eingabewerte.size() - 1].sqRootAllowed = 0;
         eingabewerte[eingabewerte.size() - 1].leftParenAllowed = 0;
         eingabewerte[eingabewerte.size() - 1].rightParenAllowed = 1;
         eingabewerte[eingabewerte.size() - 1].bracketControl = eingabewerte[eingabewerte.size() - 2].bracketControl - 1;
         rechnung += brace;
         rechnungDisp += brace;
+        ui->Rechenfenster->setText(rechnungDisp);
     }
-    ui->Rechenfenster->setText(rechnungDisp);
+    else return;
+    eingabewerte[eingabewerte.size() - 1].commaAllowed = 0;
+    eingabewerte[eingabewerte.size() - 1].commaInNumber = 0;
 }
 
 
@@ -273,7 +285,7 @@ void MainWindow::on_Button_comma_clicked()
         eingabewerte[eingabewerte.size() - 1].commaAllowed = 0;
         eingabewerte[eingabewerte.size() - 1].commaInNumber = 1;
         eingabewerte[eingabewerte.size() - 1].operatorsAllowed = 0;
-        eingabewerte[eingabewerte.size() - 1].minusallowed = 0;
+        eingabewerte[eingabewerte.size() - 1].minusAllowed = 0;
         eingabewerte[eingabewerte.size() - 1].sqRootAllowed = 0;
         eingabewerte[eingabewerte.size() - 1].leftParenAllowed = 0;
         eingabewerte[eingabewerte.size() - 1].rightParenAllowed = 0;
@@ -447,9 +459,4 @@ void MainWindow::keyPressEvent(QKeyEvent *event)
     {
         ParenthesesClicked(')');
     }
-
-    //else
-    //{
-//
-    //}
 }
