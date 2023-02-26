@@ -228,12 +228,10 @@ std::string rechenAlgorithmus(std::string rechnung)
     }
 
     if (rechnung == "NaN") return rechnung;
-
-    rechnung.pop_back();
-    if (rechnung.substr(rechnung.find(",") + 1).length() == 15)
+    if (rechnung.find(",") != std::string::npos && rechnung.substr(rechnung.find(",") + 1).length() >= 16)
     {
+        rechnung.pop_back();
         rechnung = runden(rechnung);
-
     }
     return rechnung; //.substr(rechenanfang, rechenende + 1 - rechenanfang);
 }

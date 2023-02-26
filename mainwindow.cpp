@@ -1,6 +1,7 @@
 #include "mainwindow.h"
 #include "./ui_mainwindow.h"
 #include "rechenAlgorithmus.h"
+#include <QKeyEvent>
 #include <iostream>
 #include <cmath>
 #include <vector>
@@ -9,13 +10,14 @@
 
 struct Eingabewerte
 {
+    int numberAllowed;
     int commaAllowed;
     int commaInNumber;
-    int numberAllowed;
     int operatorsAllowed;
-    int minusSqRootAllowed;
-    int leftBracketallowed;
-    int rightBracketAllowed;
+    int minusallowed;
+    int sqRootAllowed;
+    int leftParenAllowed;
+    int rightParenAllowed;
     int bracketControl;
 };
 
@@ -26,18 +28,19 @@ void resetEingabewerte()
     eingabewerte.clear();
     eingabewerte.push_back(Eingabewerte());
     eingabewerte[0].numberAllowed = 1;
-    eingabewerte[0].commaInNumber = 0;
     eingabewerte[0].commaAllowed = 0;
+    eingabewerte[0].commaInNumber = 0;
     eingabewerte[0].operatorsAllowed = 0;
-    eingabewerte[0].minusSqRootAllowed = 1;
-    eingabewerte[0].leftBracketallowed = 1;
-    eingabewerte[0].rightBracketAllowed = 0;
+    eingabewerte[0].minusallowed = 1;
+    eingabewerte[0].sqRootAllowed = 1;
+    eingabewerte[0].leftParenAllowed = 1;
+    eingabewerte[0].rightParenAllowed = 0;
     eingabewerte[0].bracketControl = 0;
 }
 
-MainWindow::MainWindow(QWidget *parent)
-    : QMainWindow(parent)
-    , ui(new Ui::MainWindow)
+MainWindow::MainWindow(QWidget *parent):
+    QMainWindow(parent),
+    ui(new Ui::MainWindow)
 {
     resetEingabewerte();
     std::locale::global(std::locale("de_DE.utf8"));
@@ -52,262 +55,245 @@ MainWindow::~MainWindow()
 std::string rechnung;
 QString rechnungDisp;
 
-
-
-void NumberClicked()
+void MainWindow::NumberClicked(char number)
 {
     eingabewerte.push_back(Eingabewerte());
-    eingabewerte[eingabewerte.size() - 1].numberAllowed = 1;
     eingabewerte[eingabewerte.size() - 1].commaInNumber = eingabewerte[eingabewerte.size() - 2].commaInNumber;
-    eingabewerte[eingabewerte.size() - 1].commaAllowed = 1;
     eingabewerte[eingabewerte.size() - 1].operatorsAllowed = 1;
-    eingabewerte[eingabewerte.size() - 1].minusSqRootAllowed = 1;
-    eingabewerte[eingabewerte.size() - 1].leftBracketallowed = 0;
-    eingabewerte[eingabewerte.size() - 1].rightBracketAllowed = 1;
+    eingabewerte[eingabewerte.size() - 1].minusallowed = 1;
+    eingabewerte[eingabewerte.size() - 1].leftParenAllowed = 0;
+    eingabewerte[eingabewerte.size() - 1].rightParenAllowed = 1;
     eingabewerte[eingabewerte.size() - 1].bracketControl = eingabewerte[eingabewerte.size() - 2].bracketControl;
+
+    if (number == 'p' && eingabewerte[eingabewerte.size() - 2].numberAllowed == 1)
+    {
+        eingabewerte[eingabewerte.size() - 1].numberAllowed = 0;
+        eingabewerte[eingabewerte.size() - 1].commaAllowed = 0;
+        eingabewerte[eingabewerte.size() - 1].sqRootAllowed = 0;
+        rechnung += strtk::type_to_string<double>(M_PI);
+        rechnungDisp += "π";
+        ui->Rechenfenster->setText(rechnungDisp);
+    }
+    else if (eingabewerte[eingabewerte.size() - 2].numberAllowed == 1)
+    {
+        eingabewerte[eingabewerte.size() - 1].numberAllowed = 1;
+        eingabewerte[eingabewerte.size() - 1].commaAllowed = 1;
+        eingabewerte[eingabewerte.size() - 1].sqRootAllowed = eingabewerte[eingabewerte.size() - 2].sqRootAllowed;
+        rechnung += number;
+        rechnungDisp += number;
+    }
+    ui->Rechenfenster->setText(rechnungDisp);
 }
 
-void OperatorClicked()
+void MainWindow::OperatorClicked(char chOperator)
 {
     eingabewerte.push_back(Eingabewerte());
     eingabewerte[eingabewerte.size() - 1].numberAllowed = 1;
-    eingabewerte[eingabewerte.size() - 1].commaInNumber = 0;
     eingabewerte[eingabewerte.size() - 1].commaAllowed = 0;
+    eingabewerte[eingabewerte.size() - 1].commaInNumber = 0;
     eingabewerte[eingabewerte.size() - 1].operatorsAllowed = 0;
-    eingabewerte[eingabewerte.size() - 1].minusSqRootAllowed = 0;
-    eingabewerte[eingabewerte.size() - 1].leftBracketallowed = 1;
-    eingabewerte[eingabewerte.size() - 1].rightBracketAllowed = 0;
+    eingabewerte[eingabewerte.size() - 1].minusallowed = 0;
+    eingabewerte[eingabewerte.size() - 1].rightParenAllowed = 0;
+    eingabewerte[eingabewerte.size() - 1].leftParenAllowed = 1;
     eingabewerte[eingabewerte.size() - 1].bracketControl = eingabewerte[eingabewerte.size() - 2].bracketControl;
+
+    if (chOperator == 'w' && eingabewerte[eingabewerte.size() - 2].sqRootAllowed == 1)
+    {
+        eingabewerte[eingabewerte.size() - 2].sqRootAllowed = 0;
+        rechnungDisp += "√";
+    }
+
+    else if (eingabewerte[eingabewerte.size() - 2].operatorsAllowed == 1)
+    {
+        eingabewerte[eingabewerte.size() - 1].sqRootAllowed = 1;
+
+        if (chOperator == '/')
+        {
+            rechnungDisp += "÷";
+        }
+        else if (chOperator == '*')
+        {
+            rechnungDisp += "·";
+        }
+        else rechnungDisp += chOperator;
+    }
+    rechnung += chOperator;
+    ui->Rechenfenster->setText(rechnungDisp);
 }
+
+void MainWindow::ParenthesesClicked(char brace)
+{
+    eingabewerte.push_back(Eingabewerte());
+    eingabewerte[eingabewerte.size() - 1].commaAllowed = 0;
+    eingabewerte[eingabewerte.size() - 1].commaInNumber = 0;
+
+    if (brace == '(' && eingabewerte[eingabewerte.size() - 2].leftParenAllowed == 1)
+    {
+        eingabewerte[eingabewerte.size() - 1].numberAllowed = 1;
+        eingabewerte[eingabewerte.size() - 1].operatorsAllowed = 0;
+        eingabewerte[eingabewerte.size() - 1].minusallowed = 1;
+        eingabewerte[eingabewerte.size() - 1].sqRootAllowed = 1;
+        eingabewerte[eingabewerte.size() - 1].leftParenAllowed = 1;
+        eingabewerte[eingabewerte.size() - 1].rightParenAllowed = 0;
+        eingabewerte[eingabewerte.size() - 1].bracketControl = eingabewerte[eingabewerte.size() - 2].bracketControl + 1;
+        rechnung += brace;
+        rechnungDisp += brace;
+    }
+
+    else if (brace == ')' && eingabewerte[eingabewerte.size() - 2].rightParenAllowed == 1 && eingabewerte[eingabewerte.size() - 2].bracketControl != 0)
+    {
+        eingabewerte[eingabewerte.size() - 1].numberAllowed = 0;
+        eingabewerte[eingabewerte.size() - 1].operatorsAllowed = 1;
+        eingabewerte[eingabewerte.size() - 1].minusallowed = 0;
+        eingabewerte[eingabewerte.size() - 1].sqRootAllowed = 0;
+        eingabewerte[eingabewerte.size() - 1].leftParenAllowed = 0;
+        eingabewerte[eingabewerte.size() - 1].rightParenAllowed = 1;
+        eingabewerte[eingabewerte.size() - 1].bracketControl = eingabewerte[eingabewerte.size() - 2].bracketControl - 1;
+        rechnung += brace;
+        rechnungDisp += brace;
+    }
+    ui->Rechenfenster->setText(rechnungDisp);
+}
+
 
 void MainWindow::on_Button_0_clicked()
 {
-    if (eingabewerte[eingabewerte.size() - 1].numberAllowed == 0) return;
-    NumberClicked();
-    rechnung += "0";
-    rechnungDisp += "0";
-    ui->Rechenfenster->setText(rechnungDisp);
+    NumberClicked('0');
 }
 
 void MainWindow::on_Button_1_clicked()
 {
-    if (eingabewerte[eingabewerte.size() - 1].numberAllowed == 0) return;
-    NumberClicked();
-    rechnung += "1";
-    rechnungDisp += "1";
-    ui->Rechenfenster->setText(rechnungDisp);
+    NumberClicked('1');
 }
 
 void MainWindow::on_Button_2_clicked()
 {
-    if (eingabewerte[eingabewerte.size() - 1].numberAllowed == 0) return;
-    NumberClicked();
-    rechnung += "2";
-    rechnungDisp += "2";
-    ui->Rechenfenster->setText(rechnungDisp);
+    NumberClicked('2');
 }
 
 void MainWindow::on_Button_3_clicked()
 {
-    if (eingabewerte[eingabewerte.size() - 1].numberAllowed == 0) return;
-    NumberClicked();
-    rechnung += "3";
-    rechnungDisp += "3";
-    ui->Rechenfenster->setText(rechnungDisp);
+    NumberClicked('3');
 }
 
 void MainWindow::on_Button_4_clicked()
 {
-    if (eingabewerte[eingabewerte.size() - 1].numberAllowed == 0) return;
-    NumberClicked();
-    rechnung += "4";
-    rechnungDisp += "4";
-    ui->Rechenfenster->setText(rechnungDisp);
+    NumberClicked('4');
 }
 
 void MainWindow::on_Button_5_clicked()
 {
-    if (eingabewerte[eingabewerte.size() - 1].numberAllowed == 0) return;
-    NumberClicked();
-    rechnung += "5";
-    rechnungDisp += "5";
-    ui->Rechenfenster->setText(rechnungDisp);
+    NumberClicked('5');
 }
 
 void MainWindow::on_Button_6_clicked()
 {
-    if (eingabewerte[eingabewerte.size() - 1].numberAllowed == 0) return;
-    NumberClicked();
-    rechnung += "6";
-    rechnungDisp += "6";
-    ui->Rechenfenster->setText(rechnungDisp);
+    NumberClicked('6');
 }
 
 void MainWindow::on_Button_7_clicked()
 {
-    if (eingabewerte[eingabewerte.size() - 1].numberAllowed == 0) return;
-    NumberClicked();
-    rechnung += "7";
-    rechnungDisp += "7";
-    ui->Rechenfenster->setText(rechnungDisp);
+    NumberClicked('7');
 }
 
 void MainWindow::on_Button_8_clicked()
 {
-    if (eingabewerte[eingabewerte.size() - 1].numberAllowed == 0) return;
-    NumberClicked();
-    rechnung += "8";
-    rechnungDisp += "8";
-    ui->Rechenfenster->setText(rechnungDisp);
+    NumberClicked('8');
 }
 
 void MainWindow::on_Button_9_clicked()
 {
-    if (eingabewerte[eingabewerte.size() - 1].numberAllowed == 0) return;
-    NumberClicked();
-    rechnung += "9";
-    rechnungDisp += "9";
-    ui->Rechenfenster->setText(rechnungDisp);
+    NumberClicked('9');
+}
+
+void MainWindow::on_Button_pi_clicked()
+{
+        NumberClicked('p');
 }
 
 void MainWindow::on_Button_leftbracket_clicked()
 {
-    if (eingabewerte[eingabewerte.size() - 1].leftBracketallowed == 0) return;
-    eingabewerte.push_back(Eingabewerte());
-    eingabewerte[eingabewerte.size() - 1].numberAllowed = 1;
-    eingabewerte[eingabewerte.size() - 1].commaInNumber = 0;
-    eingabewerte[eingabewerte.size() - 1].commaAllowed = 0;
-    eingabewerte[eingabewerte.size() - 1].operatorsAllowed = 0;
-    eingabewerte[eingabewerte.size() - 1].minusSqRootAllowed = 1;
-    eingabewerte[eingabewerte.size() - 1].leftBracketallowed = 1;
-    eingabewerte[eingabewerte.size() - 1].rightBracketAllowed = 0;
-    eingabewerte[eingabewerte.size() - 1].bracketControl = eingabewerte[eingabewerte.size() - 2].bracketControl + 1;
-    rechnung += "(";
-    rechnungDisp += "(";
-    ui->Rechenfenster->setText(rechnungDisp);
+    ParenthesesClicked('(');
 }
 
 void MainWindow::on_Button_rightbracket_clicked()
 {
-    if(eingabewerte[eingabewerte.size() - 1].rightBracketAllowed == 0 || eingabewerte[eingabewerte.size() - 1].bracketControl == 0) return;
-    eingabewerte.push_back(Eingabewerte());
-    eingabewerte[eingabewerte.size() - 1].numberAllowed = 0;
-    eingabewerte[eingabewerte.size() - 1].commaInNumber = 0;
-    eingabewerte[eingabewerte.size() - 1].commaAllowed = 0;
-    eingabewerte[eingabewerte.size() - 1].operatorsAllowed = 1;
-    eingabewerte[eingabewerte.size() - 1].minusSqRootAllowed = 1;
-    eingabewerte[eingabewerte.size() - 1].leftBracketallowed = 0;
-    eingabewerte[eingabewerte.size() - 1].rightBracketAllowed = 1;
-    eingabewerte[eingabewerte.size() - 1].bracketControl = eingabewerte[eingabewerte.size() - 2].bracketControl - 1;
-    rechnung += ")";
-    rechnungDisp += ")";
-    ui->Rechenfenster->setText(rechnungDisp);
+    ParenthesesClicked(')');
 }
 
 void MainWindow::on_Button_toThePowerOf_clicked()
 {
-    if (eingabewerte[eingabewerte.size() - 1].operatorsAllowed == 0) return;
-    OperatorClicked();
-    rechnung += "^";
-    rechnungDisp += "^";
-    ui->Rechenfenster->setText(rechnungDisp);
+    OperatorClicked('^');
 }
 
 
 void MainWindow::on_Button_divide_clicked()
 {
-    if (eingabewerte[eingabewerte.size() - 1].operatorsAllowed == 0) return;
-    OperatorClicked();
-    rechnung += "/";
-    rechnungDisp += "÷";
-    ui->Rechenfenster->setText(rechnungDisp);
+    OperatorClicked('/');
 }
 
 
 void MainWindow::on_Button_multiply_clicked()
 {
-    if (eingabewerte[eingabewerte.size() - 1].operatorsAllowed == 0) return;
-    OperatorClicked();
-    rechnung += "*";
-    rechnungDisp += "·";
-    ui->Rechenfenster->setText(rechnungDisp);
-
+     OperatorClicked('*');
 }
 
 
 void MainWindow::on_Button_minus_clicked()
 {
-    if (eingabewerte[eingabewerte.size() - 1].minusSqRootAllowed == 0) return;
-    OperatorClicked();
-    rechnung += "-";
-    rechnungDisp += "-";
-    ui->Rechenfenster->setText(rechnungDisp);
+    OperatorClicked('-');
 }
 
 
 void MainWindow::on_Button_plus_clicked()
 {
-    if (eingabewerte[eingabewerte.size() - 1].operatorsAllowed == 0) return;
-    OperatorClicked();
-    rechnung += "+";
-    rechnungDisp += "+";
-    ui->Rechenfenster->setText(rechnungDisp);
-}
+        OperatorClicked('+');
+    }
 
-
-void MainWindow::on_Button_comma_clicked()
-{
-    if (eingabewerte[eingabewerte.size() - 1].commaAllowed == 0 || eingabewerte[eingabewerte.size() - 1].commaInNumber == 1) return;
-    eingabewerte.push_back(Eingabewerte());
-    eingabewerte[eingabewerte.size() - 1].numberAllowed = 1;
-    eingabewerte[eingabewerte.size() - 1].commaInNumber = 1;
-    eingabewerte[eingabewerte.size() - 1].commaAllowed = 0;
-    eingabewerte[eingabewerte.size() - 1].operatorsAllowed = 0;
-    eingabewerte[eingabewerte.size() - 1].minusSqRootAllowed = 0;
-    eingabewerte[eingabewerte.size() - 1].leftBracketallowed = 0;
-    eingabewerte[eingabewerte.size() - 1].rightBracketAllowed = 0;
-    eingabewerte[eingabewerte.size() - 1].bracketControl = eingabewerte[eingabewerte.size() - 2].bracketControl;
-    rechnung += ",";
-    rechnungDisp += ",";
-    ui->Rechenfenster->setText(rechnungDisp);
-}
 
 void MainWindow::on_Button_modulo_clicked()
 {
-    if (eingabewerte[eingabewerte.size() - 1].operatorsAllowed == 0) return;
-    OperatorClicked();
-    rechnung += "%";
-    rechnungDisp += "%";
-    ui->Rechenfenster->setText(rechnungDisp);
+        OperatorClicked('%');
 }
 
 
 void MainWindow::on_Button_sqRoot_clicked()
 {
-    if ((eingabewerte[eingabewerte.size() - 1].numberAllowed == 0 || eingabewerte[eingabewerte.size() - 1].operatorsAllowed == 1) && !rechnung.empty()) return;
-    OperatorClicked();
-    rechnung += "w";
-    rechnungDisp += "√";
-    ui->Rechenfenster->setText(rechnungDisp);
+    OperatorClicked('w');
 }
 
 
-void MainWindow::on_Button_pi_clicked()
+
+void MainWindow::on_Button_comma_clicked()
 {
-    if (eingabewerte[eingabewerte.size() - 1].numberAllowed == 0) return;
-    NumberClicked();
-    rechnung += strtk::type_to_string<double>(M_PI);
-    rechnungDisp += "π";
-    ui->Rechenfenster->setText(rechnungDisp);
+    if (eingabewerte[eingabewerte.size() - 1].commaAllowed == 1 || eingabewerte[eingabewerte.size() - 1].commaInNumber == 0)
+    {
+        eingabewerte.push_back(Eingabewerte());
+        eingabewerte[eingabewerte.size() - 1].numberAllowed = 1;
+        eingabewerte[eingabewerte.size() - 1].commaAllowed = 0;
+        eingabewerte[eingabewerte.size() - 1].commaInNumber = 1;
+        eingabewerte[eingabewerte.size() - 1].operatorsAllowed = 0;
+        eingabewerte[eingabewerte.size() - 1].minusallowed = 0;
+        eingabewerte[eingabewerte.size() - 1].sqRootAllowed = 0;
+        eingabewerte[eingabewerte.size() - 1].leftParenAllowed = 0;
+        eingabewerte[eingabewerte.size() - 1].rightParenAllowed = 0;
+        eingabewerte[eingabewerte.size() - 1].bracketControl = eingabewerte[eingabewerte.size() - 2].bracketControl;
+        rechnung += ",";
+        rechnungDisp += ",";
+        ui->Rechenfenster->setText(rechnungDisp);
+    }
 }
+
 
 void MainWindow::on_Button_delete_clicked()
 {
-    if (rechnung.empty()) return;
-    rechnung.pop_back();
-    rechnungDisp.truncate(rechnungDisp.size()-1);
-     eingabewerte.erase(eingabewerte.end() - 1);
-    ui->Rechenfenster->setText(rechnungDisp);
+    if (!rechnung.empty())
+    {
+        rechnung.pop_back();
+        rechnungDisp.truncate(rechnungDisp.size()-1);
+        eingabewerte.erase(eingabewerte.end() - 1);
+        ui->Rechenfenster->setText(rechnungDisp);
+    }
 }
 
 void MainWindow::on_Button_AC_clicked()
@@ -328,9 +314,142 @@ void MainWindow::on_Button_equal_clicked()
     }
     if (eingabewerte[eingabewerte.size() - 1].bracketControl != 0)
     {
-        ui->Ergebnisfenster->setText("Fehler! Nicht alle Klammern wurden geschlossen");
+        ui->Ergebnisfenster->setText("Fehler! Klammern nicht geschlossen");
         return;
     }
     ui->Ergebnisfenster->setText(QString::fromStdString(rechenAlgorithmus(rechnung)));
     ui->Ergebnisfenster->setAlignment(Qt::AlignRight);
+}
+
+void MainWindow::keyPressEvent(QKeyEvent *event)
+{
+    if(event->key() == Qt::Key_0)
+    {
+        NumberClicked('0');
+    }
+
+    if(event->key() == Qt::Key_1)
+    {
+        NumberClicked('1');
+    }
+
+    if(event->key() == Qt::Key_2)
+    {
+        NumberClicked('2');
+    }
+
+    if(event->key() == Qt::Key_3)
+    {
+        NumberClicked('3');
+    }
+
+    if(event->key() == Qt::Key_4)
+    {
+        NumberClicked('4');
+    }
+
+    if(event->key() == Qt::Key_5)
+    {
+        NumberClicked('5');
+    }
+
+    if(event->key() == Qt::Key_6)
+    {
+        NumberClicked('6');
+    }
+
+    if(event->key() == Qt::Key_7)
+    {
+        NumberClicked('7');
+    }
+
+    if(event->key() == Qt::Key_8)
+    {
+        NumberClicked('8');
+    }
+
+    if(event->key() == Qt::Key_9)
+    {
+        NumberClicked('9');
+    }
+
+    if(event->key() == Qt::Key_P)
+    {
+        NumberClicked('p');
+    }
+
+    if(event->key() == Qt::Key_Comma)
+    {
+        on_Button_comma_clicked();
+    }
+
+    if(event->key() == Qt::Key_Dead_Circumflex)
+    {
+        OperatorClicked('^');
+    }
+
+    if(event->key() == Qt::Key_W)
+    {
+        OperatorClicked('w');
+    }
+
+    if(event->key() == Qt::Key_Percent)
+    {
+        OperatorClicked('%');
+    }
+
+    if(event->key() == Qt::Key_Slash)
+    {
+        OperatorClicked('/');
+    }
+
+    if(event->key() == Qt::Key_Asterisk)
+    {
+        OperatorClicked('*');
+    }
+
+    if(event->key() == Qt::Key_Plus)
+    {
+        OperatorClicked('+');
+    }
+
+    if(event->key() == Qt::Key_Minus)
+    {
+        OperatorClicked('-');
+    }
+
+    if(event->key() == Qt::Key_Percent)
+    {
+        OperatorClicked('%');
+    }
+
+    if(event->key() == Qt::Key_Return)
+    {
+        on_Button_equal_clicked();
+    }
+
+    if(event->key() == Qt::Key_Backspace)
+    {
+        on_Button_delete_clicked();
+    }
+
+    if(event->key() == Qt::Key_Delete)
+    {
+        on_Button_AC_clicked();
+    }
+
+    if(event->key() == Qt::Key_ParenLeft)
+    {
+        ParenthesesClicked('(');
+    }
+
+    if(event->key() == Qt::Key_ParenRight)
+    {
+        ParenthesesClicked(')');
+    }
+
+    //else
+    //{
+//
+    //}
 }

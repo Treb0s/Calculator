@@ -64,6 +64,14 @@ private slots:
 
     void on_Button_delete_clicked();
 
+    void keyPressEvent(QKeyEvent *event);
+
+    void NumberClicked(char number);
+
+    void ParenthesesClicked(char brace);
+
+    void OperatorClicked(char chOperator);
+
 private:
     Ui::MainWindow *ui;
 };
