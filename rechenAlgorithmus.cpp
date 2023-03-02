@@ -4,6 +4,7 @@
 #include <math.h>
 #include <cmath>
 #include <algorithm>
+#include "stringNummerFunktionen.h"
 #include "strtk.hpp"
 
 enum Rechenoperatoren
@@ -20,42 +21,6 @@ enum Rechenoperatoren
 std::vector<double> vRechnung;
 
 std::string sOperator = "^w%/*+-";
-
-std::string runden(std::string rechnung)
-{
-    //if (rechnung.size() > 3 && int(rechnung[rechnung.size() - 1])  >= 53 && rechnung[rechnung.size() - 2] < 57) rechnung[rechnung.size() - 2] += 1;
-    //rechnung.pop_back();
-    if (int(rechnung[rechnung.size() - 1] == 57))
-    {
-        while (int(rechnung[rechnung.size() - 1]) == 57)
-        {
-            rechnung.pop_back();
-        }
-        if (rechnung[rechnung.size() - 1] != ',') rechnung[rechnung.size() - 1] += 1;
-    }
-
-    if (rechnung[rechnung.size() - 1] == ',') //','
-    {
-        rechnung.pop_back();
-        for (int i = rechnung.size() - 1; i >= 0; i--)
-        {
-            if (int(rechnung[i]) < 57)
-            {
-                rechnung[i] += 1;
-                break;
-            }
-
-            if (int(rechnung[i]) == 57)
-            {
-                rechnung[i] = '0';
-            }
-
-            if (i == 0 && int(rechnung[i]) == 48) rechnung.insert(0, "1");
-        }
-    }
-
-    return rechnung;
-}
 
 std::string rechnen()
 {
@@ -166,7 +131,6 @@ std::string rechenAlgorithmus(std::string rechnung)
     int rechenanfang = 0;
     int klammern = 0;
     int insertAnfang = 0;
-    int punkteInsertAnfang = 0;
     int minusVorhanden = 0;
     //int vorzeichenZahlEnde = 0;
     while (rechnung.find_last_of("^w%/*+-") == rechnung.length() - 1) rechnung.pop_back();
@@ -239,44 +203,13 @@ std::string rechenAlgorithmus(std::string rechnung)
         rechnung.insert(rechenanfang - klammern, rechnen());
     }
 
-    while (rechnung[0] == '(')
-    {
-        rechnung.erase(rechnung.begin(), rechnung.begin() + 1);
-        rechnung.pop_back();
-    }
+    rechnung = KlammernLöschen(rechnung);
 
+    rechnung = NullenLöschen(rechnung);
 
-    if (rechnung[0] == '[')
-    {
-        rechnung.erase(rechnung.begin(), rechnung.begin() + 1);
-        rechnung.pop_back();
-    }
+    rechnung = Runden(rechnung);
 
-    while (rechnung[0] == '0' && rechnung[1] != ',' && rechnung.size() > 1)
-    {
-        rechnung.erase(rechnung.begin(), rechnung.begin() + 1);
-    }
-
-    while (rechnung[rechnung.size() - 1] == '0')
-    {
-        rechnung.pop_back();
-    }
-    if (rechnung[rechnung.size() - 1] == ',') rechnung.pop_back();
-
-    //if (rechnung == "NaN") return rechnung;
-    if (rechnung.find(",") != std::string::npos && rechnung.substr(rechnung.find(",") + 1).length() >= 16)
-    {
-        rechnung.pop_back();
-        rechnung = runden(rechnung);
-    }
-    punkteInsertAnfang = rechnung.find(",");
-    if (punkteInsertAnfang == std::string::npos) punkteInsertAnfang = rechnung.length();
-    if (rechnung[0] == '-') minusVorhanden = 1;
-
-    for (int i = rechnung.substr(0 , punkteInsertAnfang).length() -3; i > minusVorhanden; i -= 3)
-        {
-            rechnung.insert(i, ".");
-        }
+    rechnung = PunkteFormatierung(rechnung);
 
     return rechnung; //.substr(rechenanfang, rechenende + 1 - rechenanfang);
 }

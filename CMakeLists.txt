@@ -18,8 +18,10 @@ set(PROJECT_SOURCES
         main.cpp
         mainwindow.cpp
         rechenAlgorithmus.cpp
+        stringNummerFunktionen.cpp
         mainwindow.h
         rechenAlgorithmus.h
+        stringNummerFunktionen.h
         strtk.hpp
         mainwindow.ui
         ${TS_FILES}
