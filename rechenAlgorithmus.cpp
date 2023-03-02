@@ -245,7 +245,7 @@ std::string rechenAlgorithmus(std::string rechnung)
         rechnung.pop_back();
     }
 
-    while (rechnung[0] == '0')
+    while (rechnung[0] == '0' && rechnung[1] != ',')
     {
         rechnung.erase(rechnung.begin(), rechnung.begin() + 1);
     }
