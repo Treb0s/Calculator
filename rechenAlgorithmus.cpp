@@ -245,16 +245,23 @@ std::string rechenAlgorithmus(std::string rechnung)
         rechnung.pop_back();
     }
 
-    while (rechnung[0] == '0' && rechnung[1] != ',')
-    {
-        rechnung.erase(rechnung.begin(), rechnung.begin() + 1);
-    }
 
     if (rechnung[0] == '[')
     {
         rechnung.erase(rechnung.begin(), rechnung.begin() + 1);
         rechnung.pop_back();
     }
+
+    while (rechnung[0] == '0' && rechnung[1] != ',' && rechnung.size() > 1)
+    {
+        rechnung.erase(rechnung.begin(), rechnung.begin() + 1);
+    }
+
+    while (rechnung[rechnung.size() - 1] == '0')
+    {
+        rechnung.pop_back();
+    }
+    if (rechnung[rechnung.size() - 1] == ',') rechnung.pop_back();
 
     //if (rechnung == "NaN") return rechnung;
     if (rechnung.find(",") != std::string::npos && rechnung.substr(rechnung.find(",") + 1).length() >= 16)
