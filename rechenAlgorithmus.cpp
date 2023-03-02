@@ -167,6 +167,7 @@ std::string rechenAlgorithmus(std::string rechnung)
     int klammern = 0;
     int insertAnfang = 0;
     int punkteInsertAnfang = 0;
+    int minusVorhanden = 0;
     //int vorzeichenZahlEnde = 0;
     if (rechnung.find_last_of("^w%/*+-") == rechnung.length() - 1) rechnung.pop_back();
 
@@ -263,10 +264,11 @@ std::string rechenAlgorithmus(std::string rechnung)
     }
     punkteInsertAnfang = rechnung.find(",");
     if (punkteInsertAnfang == std::string::npos) punkteInsertAnfang = rechnung.length();
+    if (rechnung[0] == '-') minusVorhanden = 1;
 
-    for (int i = rechnung.substr(0 , punkteInsertAnfang).length() -3; i > 0; i -= 3)
+    for (int i = rechnung.substr(0 , punkteInsertAnfang).length() -3; i > minusVorhanden; i -= 3)
         {
-            if (rechnung[i - 1] != '-')rechnung.insert(i, ".");
+            rechnung.insert(i, ".");
         }
 
     return rechnung; //.substr(rechenanfang, rechenende + 1 - rechenanfang);
