@@ -169,7 +169,7 @@ std::string rechenAlgorithmus(std::string rechnung)
     int punkteInsertAnfang = 0;
     int minusVorhanden = 0;
     //int vorzeichenZahlEnde = 0;
-    if (rechnung.find_last_of("^w%/*+-") == rechnung.length() - 1) rechnung.pop_back();
+    while (rechnung.find_last_of("^w%/*+-") == rechnung.length() - 1) rechnung.pop_back();
 
     if (rechnung.find("w-") != std::string::npos) rechnung = "NaN";
 
