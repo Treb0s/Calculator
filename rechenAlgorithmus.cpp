@@ -27,38 +27,33 @@ std::string runden(std::string rechnung)
     //rechnung.pop_back();
     if (int(rechnung[rechnung.size() - 1] == 57))
     {
-        while (int(rechnung[rechnung.size() - 1] == 57) && rechnung[rechnung.size() - 2] != ',')
+        while (int(rechnung[rechnung.size() - 1]) == 57)
         {
             rechnung.pop_back();
         }
-        rechnung[rechnung.size() - 1] += 1;
+        if (rechnung[rechnung.size() - 1] != ',') rechnung[rechnung.size() - 1] += 1;
     }
 
     if (rechnung[rechnung.size() - 1] == ',') //','
     {
         rechnung.pop_back();
-        for (int i = rechnung.size() - 1; i > 0; i--)
+        for (int i = rechnung.size() - 1; i >= 0; i--)
         {
             if (int(rechnung[i]) < 57)
             {
-                rechnung[0] += 1;
+                rechnung[i] += 1;
                 break;
             }
+
+            if (int(rechnung[i]) == 57)
+            {
+                rechnung[i] = '0';
+            }
+
+            if (i == 0 && int(rechnung[i]) == 48) rechnung.insert(0, "1");
         }
     }
 
-    for (int i = rechnung.length() - 1; i >= 0; i--)
-    {
-        if (rechnung[i] == '0') rechnung.pop_back();
-
-        else if (rechnung[i] == ',')
-        {
-            rechnung.pop_back();
-            break;
-        }
-
-        else break;
-    }
     return rechnung;
 }
 
@@ -247,6 +242,11 @@ std::string rechenAlgorithmus(std::string rechnung)
     {
         rechnung.erase(rechnung.begin(), rechnung.begin() + 1);
         rechnung.pop_back();
+    }
+
+    while (rechnung[0] == '0')
+    {
+        rechnung.erase(rechnung.begin(), rechnung.begin() + 1);
     }
 
     if (rechnung[0] == '[')
