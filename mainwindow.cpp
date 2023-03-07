@@ -45,6 +45,8 @@ MainWindow::MainWindow(QWidget *parent):
     resetEingabewerte();
     std::locale::global(std::locale("de_DE.utf8"));
     ui->setupUi(this);
+    ui->Rechenfenster->setLineWrapMode(QTextEdit::NoWrap);
+    ui->Ergebnisfenster->setLineWrapMode(QTextEdit::NoWrap);
 }
 
 MainWindow::~MainWindow()
@@ -85,6 +87,7 @@ void MainWindow::NumberClicked(char number)
     eingabewerte[eingabewerte.size() - 1].rightParenAllowed = 1;
     eingabewerte[eingabewerte.size() - 1].bracketControl = eingabewerte[eingabewerte.size() - 2].bracketControl;
     ui->Rechenfenster->setText(rechnungDisp);
+    ui->Rechenfenster->moveCursor(QTextCursor::End);
 }
 
 void MainWindow::OperatorClicked(char chOperator)
@@ -132,6 +135,7 @@ void MainWindow::OperatorClicked(char chOperator)
     eingabewerte[eingabewerte.size() - 1].leftParenAllowed = 1;
     eingabewerte[eingabewerte.size() - 1].bracketControl = eingabewerte[eingabewerte.size() - 2].bracketControl;
     ui->Rechenfenster->setText(rechnungDisp);
+    ui->Rechenfenster->moveCursor(QTextCursor::End);
 }
 
 void MainWindow::ParenthesesClicked(char brace)
@@ -150,6 +154,7 @@ void MainWindow::ParenthesesClicked(char brace)
         rechnung += brace;
         rechnungDisp += brace;
         ui->Rechenfenster->setText(rechnungDisp);
+        ui->Rechenfenster->moveCursor(QTextCursor::End);
     }
 
     else if (brace == ')' && eingabewerte[eingabewerte.size() - 1].rightParenAllowed == 1 && eingabewerte[eingabewerte.size() - 1].bracketControl != 0)
@@ -165,6 +170,7 @@ void MainWindow::ParenthesesClicked(char brace)
         rechnung += brace;
         rechnungDisp += brace;
         ui->Rechenfenster->setText(rechnungDisp);
+        ui->Rechenfenster->moveCursor(QTextCursor::End);
     }
     else return;
     eingabewerte[eingabewerte.size() - 1].commaAllowed = 0;
@@ -297,6 +303,7 @@ void MainWindow::on_Button_comma_clicked()
         rechnung += ",";
         rechnungDisp += ",";
         ui->Rechenfenster->setText(rechnungDisp);
+        ui->Rechenfenster->moveCursor(QTextCursor::End);
     }
 }
 
@@ -309,6 +316,7 @@ void MainWindow::on_Button_delete_clicked()
         rechnungDisp.truncate(rechnungDisp.size()-1);
         eingabewerte.erase(eingabewerte.end() - 1);
         ui->Rechenfenster->setText(rechnungDisp);
+        ui->Rechenfenster->moveCursor(QTextCursor::End);
     }
 }
 
@@ -319,6 +327,7 @@ void MainWindow::on_Button_AC_clicked()
     rechnungDisp.clear();
     ui->Ergebnisfenster->setText("");
     ui->Rechenfenster->setText(rechnungDisp);
+    ui->Rechenfenster->moveCursor(QTextCursor::End);
 }
 
 void MainWindow::on_Button_equal_clicked()

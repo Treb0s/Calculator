@@ -40,6 +40,15 @@
       <pointsize>20</pointsize>
      </font>
     </property>
+    <property name="toolTipDuration">
+     <number>0</number>
+    </property>
+    <property name="verticalScrollBarPolicy">
+     <enum>Qt::ScrollBarAlwaysOff</enum>
+    </property>
+    <property name="horizontalScrollBarPolicy">
+     <enum>Qt::ScrollBarAsNeeded</enum>
+    </property>
    </widget>
    <widget class="QToolButton" name="Button_7">
     <property name="geometry">
@@ -1118,6 +1127,9 @@
     </property>
     <property name="inputMethodHints">
      <set>Qt::ImhMultiLine</set>
+    </property>
+    <property name="verticalScrollBarPolicy">
+     <enum>Qt::ScrollBarAlwaysOff</enum>
     </property>
    </widget>
    <widget class="QToolButton" name="Button_rightbracket">

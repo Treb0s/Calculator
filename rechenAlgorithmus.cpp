@@ -181,6 +181,7 @@ std::string rechenAlgorithmus(std::string rechnung)
 //
         //    else rechnung.insert(rechnung.substr(insertAnfang + 6).find_first_of("^%/*+-)") + insertAnfang + 6, ")");
         //}
+        //Das hier hätte wurzeln aus negativen Zahlen eingeklammert, aber da der Rechner das sowieso nicht kann, braucht es diese extra komplexität nicht.
     }
 
 
